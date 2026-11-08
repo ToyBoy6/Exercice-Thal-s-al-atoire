@@ -1,106 +1,270 @@
+```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Exercice de Thalès - Style MathALéa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3G20 - Théorème de Thalès (MathALéa)</title>
+    <!-- Tailwind CSS pour un design moderne et responsive -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 30px auto; padding: 20px; background-color: #f4f6f9; color: #333; }
-        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .header { background: #1a73e8; color: white; padding: 12px 15px; border-radius: 5px; font-weight: bold; margin-bottom: 20px; font-size: 1.1em; }
-        button { background: #ff6600; color: white; border: none; padding: 10px 18px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-bottom: 20px; }
-        button:hover { background: #e55b00; }
-        .btn-verifier { background: #28a745; }
-        .btn-verifier:hover { background: #218838; }
-        input[type="text"] { padding: 6px; width: 90px; text-align: center; border: 1px solid #ccc; border-radius: 4px; }
-        textarea { width: 100%; height: 90px; margin-top: 5px; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; resize: vertical; }
-        .question-block { margin: 20px 0; }
-        .result { margin-top: 15px; font-weight: bold; font-size: 1.1em; }
-        .enonce-box { background: #fff3e0; padding: 15px; border-left: 5px solid #ff6600; border-radius: 4px; margin-bottom: 20px; line-height: 1.6; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        /* Style MathALéa pour la typographie des grandeurs */
+        .math-variable {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-weight: 600;
+        }
     </style>
 </head>
-<body>
+<body class="min-h-screen text-gray-800 p-3 sm:p-6 flex flex-col items-center justify-start">
 
-<div class="card">
-    <div class="header">3G20 - Calculer des longueurs avec le théorème de Thalès</div>
-    
-    <button onclick="genererExercice()">🔄 Nouvel Énoncé</button>
-    
-    <div id="enonce" class="enonce-box">Chargement de l'énoncé...</div>
-    
-    <div class="question-block">
-        <label for="userCalculation"><strong>📝 Espace pour insérer ton calcul / ta rédaction :</strong></label><br>
-        <textarea id="userCalculation" placeholder="Écris ici ton rapport de proportionnalité (ex: HI / FH = IJ / FG ...) et tes étapes de calcul..."></textarea>
+    <!-- Carte Principale -->
+    <div class="w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 mb-6">
+        
+        <!-- En-tête MathALéa -->
+        <div class="bg-slate-800 text-white p-4 sm:p-5 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <span class="bg-sky-500 text-white text-xs sm:text-sm font-bold px-2.5 py-1 rounded-md shadow-sm">3G20</span>
+                <h1 class="text-sm sm:text-lg font-semibold tracking-wide">Calculer des longueurs avec le théorème de Thalès</h1>
+            </div>
+        </div>
+
+        <div class="p-4 sm:p-6 space-y-6">
+
+            <!-- Barres d'actions -->
+            <div class="flex flex-wrap gap-3 items-center justify-between border-b border-gray-100 pb-4">
+                <button onclick="genererExercice()" class="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-medium text-sm px-4 py-2.5 rounded-xl shadow-md transition active:scale-95">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Nouvel Énoncé
+                </button>
+                <button onclick="toggleHighlight()" id="btnHighlight" class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs sm:text-sm px-3.5 py-2.5 rounded-xl transition">
+                    <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
+                    <span id="highlightText">Colorier les 2 triangles</span>
+                </button>
+            </div>
+
+            <!-- Énoncé -->
+            <div id="enonceText" class="text-sm sm:text-base leading-relaxed bg-amber-50/60 p-4 rounded-xl border border-amber-200/60 text-slate-800">
+                <!-- Généré en JS -->
+            </div>
+
+            <!-- Figure SVG dynamique (Papillon) -->
+            <div class="w-full flex justify-center items-center bg-slate-50 p-3 sm:p-5 rounded-2xl border border-slate-100 shadow-inner overflow-hidden">
+                <svg id="thalesSvg" viewBox="0 0 450 250" class="w-full h-auto max-w-md select-none">
+                    <!-- Triangles colorés au survol ou bouton -->
+                    <polygon id="triangleHIJ" points="100,50 60,85 180,120" fill="transparent" transition="fill 0.3s"></polygon>
+                    <polygon id="triangleHFG" points="180,120 320,210 390,160" fill="transparent" transition="fill 0.3s"></polygon>
+
+                    <!-- Droites et segments -->
+                    <!-- Ligne FI (sécanter en H) -->
+                    <line x1="100" y1="50" x2="320" y2="210" stroke="#1e293b" stroke-width="2.5" stroke-linecap="round"/>
+                    <!-- Ligne JG (sécante en H) -->
+                    <line x1="60" y1="85" x2="390" y2="160" stroke="#1e293b" stroke-width="2.5" stroke-linecap="round"/>
+                    <!-- Droite parallèle IJ -->
+                    <line x1="100" y1="50" x2="60" y2="85" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round"/>
+                    <!-- Droite parallèle FG -->
+                    <line x1="320" y1="210" x2="390" y2="160" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round"/>
+
+                    <!-- Points et Étiquettes -->
+                    <!-- Point H -->
+                    <circle cx="180" cy="120" r="3.5" fill="#0f172a"/>
+                    <text x="180" y="142" font-family="Times New Roman" font-style="italic" font-weight="bold" font-size="17" text-anchor="middle" fill="#0f172a">H</text>
+
+                    <!-- Point I -->
+                    <circle cx="100" cy="50" r="3.5" fill="#0f172a"/>
+                    <text x="105" y="42" font-family="Times New Roman" font-style="italic" font-weight="bold" font-size="17" fill="#0f172a">I</text>
+
+                    <!-- Point J -->
+                    <circle cx="60" cy="85" r="3.5" fill="#0f172a"/>
+                    <text x="42" y="90" font-family="Times New Roman" font-style="italic" font-weight="bold" font-size="17" fill="#0f172a">J</text>
+
+                    <!-- Point F -->
+                    <circle cx="320" cy="210" r="3.5" fill="#0f172a"/>
+                    <text x="320" y="230" font-family="Times New Roman" font-style="italic" font-weight="bold" font-size="17" text-anchor="middle" fill="#0f172a">F</text>
+
+                    <!-- Point G -->
+                    <circle cx="390" cy="160" r="3.5" fill="#0f172a"/>
+                    <text x="405" y="165" font-family="Times New Roman" font-style="italic" font-weight="bold" font-size="17" fill="#0f172a">G</text>
+                </svg>
+            </div>
+
+            <!-- Espace Rédiger son calcul -->
+            <div class="space-y-2">
+                <label for="calculInput" class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-700">
+                    <svg class="w-4 h-4 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                    Zone d'insertion de ton calcul / rédaction :
+                </label>
+                <textarea id="calculInput" rows="3" placeholder="Écris ici ton raisonnement (ex: Les droites (FI) et (GJ) sont sécantes en H. Comme (FG) // (IJ), d'après le théorème de Thalès...)" class="w-full text-xs sm:text-sm p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition shadow-sm"></textarea>
+            </div>
+
+            <!-- Réponses & Saisie des résultats -->
+            <div class="bg-gray-50 p-4 sm:p-5 rounded-2xl border border-gray-100 space-y-4">
+                <h3 class="text-xs sm:text-sm font-semibold text-gray-600 uppercase tracking-wider">Résultats à trouver</h3>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="flex items-center space-x-2">
+                        <span class="math-variable text-lg text-slate-800">IJ =</span>
+                        <input type="text" id="ansIJ" inputmode="decimal" placeholder="ex: 2.4" class="w-28 text-center px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none font-medium">
+                        <span class="text-xs text-gray-500">(en cm)</span>
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                        <span class="math-variable text-lg text-slate-800">HG =</span>
+                        <input type="text" id="ansHG" inputmode="decimal" placeholder="ex: 12" class="w-28 text-center px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none font-medium">
+                        <span class="text-xs text-gray-500">(en cm)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bouton de validation -->
+            <button onclick="verifierReponses()" class="w-full bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition transform active:scale-[0.99] flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                VÉRIFIER LA RÉPONSE
+            </button>
+
+            <!-- Message d'erreur / Feedback -->
+            <div id="feedback" class="hidden p-4 rounded-xl border text-xs sm:text-sm leading-relaxed transition-all duration-300">
+                <!-- Rempli par le script -->
+            </div>
+
+        </div>
     </div>
 
-    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+    <!-- Script JS pour la génération dynamique et la logique -->
+    <script>
+        // Variables globales pour stocker l'état actuel
+        let currentFH, currentFG, currentHI, currentHJ;
+        let expectedIJ, expectedHG;
+        let isHighlighted = false;
 
-    <div class="question-block">
-        $IJ =$ <input type="text" id="ansIJ"> cm <br><br>
-        $HG =$ <input type="text" id="ansHG"> cm
-    </div>
+        // Génère des entiers ou décimaux simples pour une bonne jouabilité
+        function getRandomValue(min, max, step = 0.5) {
+            const steps = (max - min) / step;
+            return Math.round((min + Math.floor(Math.random() * steps) * step) * 10) / 10;
+        }
 
-    <button class="btn-verifier" onclick="verifierReponse()">Vérifier la réponse</button>
-    <div id="feedback" class="result"></div>
-</div>
+        function genererExercice() {
+            // Re-génération des données de départ
+            // Configuration de Thalès: IJ/FG = HI/FH = HJ/HG
+            // Donc k = HI / FH
+            currentFH = getRandomValue(8, 14, 1);       // FH
+            currentFG = getRandomValue(5, 10, 0.5);     // FG
+            currentHI = getRandomValue(3, 6, 0.5);      // HI
+            currentHJ = getRandomValue(4, 7, 0.5);      // HJ
 
-<script>
-let correctIJ, correctHG;
+            // Calcul des valeurs attendues :
+            // IJ = FG * (HI / FH)
+            expectedIJ = Math.round((currentFG * (currentHI / currentFH)) * 100) / 100;
 
-function genererExercice() {
-    // Liste de cas cohérents pour le théorème de Thalès (configuration papillon)
-    const listEx = [
-        {FH: 10, FG: 5, HI: 4, HJ: 4.8, IJ: 2, HG: 12},
-        {FH: 12, FG: 6, HI: 3, HJ: 5, IJ: 1.5, HG: 20},
-        {FH: 9, FG: 6, HI: 3, HJ: 4.5, IJ: 2, HG: 13.5},
-        {FH: 15, FG: 10, HI: 5, HJ: 6, IJ: 3.33, HG: 18}
-    ];
-    
-    // Sélection aléatoire d'un exercice de la liste
-    let ex = listEx[Math.floor(Math.random() * listEx.length)];
-    
-    correctIJ = ex.IJ;
-    correctHG = ex.HG;
+            // HG = HJ * (FH / HI)
+            expectedHG = Math.round((currentHJ * (currentFH / currentHI)) * 100) / 100;
 
-    let texte = `Sur la figure suivante (configuration en papillon sécante en $H$ avec $(FG)//(IJ)$), on a :<br>` +
-                `• $FH = ${ex.FH}\\text{ cm}$<br>` +
-                `• $FG = ${ex.FG}\\text{ cm}$<br>` +
-                `• $HI = ${ex.HI}\\text{ cm}$<br>` +
-                `• $HJ = ${ex.HJ}\\text{ cm}$`;
-    
-    document.getElementById('enonce').innerHTML = texte;
-    document.getElementById('ansIJ').value = '';
-    document.getElementById('ansHG').value = '';
-    document.getElementById('userCalculation').value = '';
-    document.getElementById('feedback').innerHTML = '';
-}
+            // Mise à jour de l'énoncé
+            const enonceHTML = `
+                Sur la figure suivante, 
+                <span class="math-variable">FH</span> = <strong>${currentFH} cm</strong>, 
+                <span class="math-variable">FG</span> = <strong>${currentFG} cm</strong>, 
+                <span class="math-variable">HI</span> = <strong>${currentHI} cm</strong>, 
+                <span class="math-variable">HJ</span> = <strong>${currentHJ} cm</strong> et 
+                (<span class="math-variable">FG</span>) // (<span class="math-variable">IJ</span>).
+            `;
+            document.getElementById('enonceText').innerHTML = enonceHTML;
 
-function verifierReponse() {
-    let userIJ = parseFloat(document.getElementById('ansIJ').value.replace(',', '.'));
-    let userHG = parseFloat(document.getElementById('ansHG').value.replace(',', '.'));
-    
-    let feedback = document.getElementById('feedback');
-    
-    if (isNaN(userIJ) || isNaN(userHG)) {
-        feedback.style.color = '#d9534f';
-        feedback.innerHTML = '⚠️ Merci de remplir les deux champs numériques pour $IJ$ et $HG$.';
-        return;
-    }
+            // Réinitialisation des inputs et feedbacks
+            document.getElementById('ansIJ').value = '';
+            document.getElementById('ansHG').value = '';
+            document.getElementById('calculInput').value = '';
+            
+            const feedbackEl = document.getElementById('feedback');
+            feedbackEl.classList.add('hidden');
+            feedbackEl.className = 'hidden p-4 rounded-xl border text-xs sm:text-sm leading-relaxed transition-all duration-300';
 
-    let okIJ = Math.abs(userIJ - correctIJ) < 0.1;
-    let okHG = Math.abs(userHG - correctHG) < 0.1;
+            // Re-désactiver le surlignage si actif
+            if(isHighlighted) toggleHighlight();
+        }
 
-    if (okIJ && okHG) {
-        feedback.style.color = '#28a745';
-        feedback.innerHTML = '🎉 Excellent ! Tes réponses sont correctes et ton calcul est enregistré.';
-    } else {
-        feedback.style.color = '#d9534f';
-        feedback.innerHTML = `❌ Il y a une erreur. Les valeurs attendues étaient : $IJ = ${correctIJ}\\text{ cm}$ et $HG = ${correctHG}\\text{ cm}$.`;
-    }
-}
+        // Bascule la mise en couleur des deux triangles (Thalès)
+        function toggleHighlight() {
+            isHighlighted = !isHighlighted;
+            const polyHIJ = document.getElementById('triangleHIJ');
+            const polyHFG = document.getElementById('triangleHFG');
+            const btnText = document.getElementById('highlightText');
 
-// Générer l'exercice au chargement de la page
-window.onload = genererExercice;
-</script>
+            if (isHighlighted) {
+                polyHIJ.setAttribute('fill', 'rgba(59, 130, 246, 0.25)'); // Bleu semi-transparent
+                polyHFG.setAttribute('fill', 'rgba(249, 115, 22, 0.25)'); // Orange semi-transparent
+                btnText.textContent = 'Masquer les couleurs';
+            } else {
+                polyHIJ.setAttribute('fill', 'transparent');
+                polyHFG.setAttribute('fill', 'transparent');
+                btnText.textContent = 'Colorier les 2 triangles';
+            }
+        }
 
+        // Vérification des réponses de l'utilisateur
+        function verifierReponses() {
+            const valIJ = parseFloat(document.getElementById('ansIJ').value.replace(',', '.'));
+            const valHG = parseFloat(document.getElementById('ansHG').value.replace(',', '.'));
+            const feedbackEl = document.getElementById('feedback');
+
+            feedbackEl.classList.remove('hidden');
+
+            if (isNaN(valIJ) || isNaN(valHG)) {
+                feedbackEl.className = 'p-4 rounded-xl border bg-amber-50 border-amber-300 text-amber-800';
+                feedbackEl.innerHTML = '⚠️ <strong>Attention :</strong> Merci de remplir les deux champs de réponse (<span class="math-variable">IJ</span> et <span class="math-variable">HG</span>).';
+                return;
+            }
+
+            // Tolérance d'arrondi (± 0.1)
+            const correctIJ = Math.abs(valIJ - expectedIJ) < 0.1;
+            const correctHG = Math.abs(valHG - expectedHG) < 0.1;
+
+            if (correctIJ && correctHG) {
+                feedbackEl.className = 'p-4 rounded-xl border bg-emerald-50 border-emerald-300 text-emerald-900';
+                feedbackEl.innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <span class="text-xl">🎉</span>
+                        <div>
+                            <p class="font-bold text-base mb-1">Bravo, tes résultats sont corrects !</p>
+                            <p class="text-emerald-700">
+                                • <span class="math-variable">IJ</span> = ${expectedIJ} cm<br>
+                                • <span class="math-variable">HG</span> = ${expectedHG} cm
+                            </p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                feedbackEl.className = 'p-4 rounded-xl border bg-rose-50 border-rose-300 text-rose-900';
+                feedbackEl.innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <span class="text-xl">❌</span>
+                        <div>
+                            <p class="font-bold text-base mb-1">Attention, il y a des erreurs.</p>
+                            <p class="mb-2">Rappel des égalités de Thalès dans les triangles <span class="math-variable">HIJ</span> et <span class="math-variable">HFG</span> :</p>
+                            <p class="font-mono bg-white/70 p-2 rounded border border-rose-200 mb-2">
+                                HI / FH = HJ / HG = IJ / FG
+                            </p>
+                            <p class="text-rose-800">
+                                <strong>Valeurs attendues :</strong><br>
+                                • <span class="math-variable">IJ</span> = (${currentFG} × ${currentHI}) / ${currentFH} ≈ <strong>${expectedIJ} cm</strong><br>
+                                • <span class="math-variable">HG</span> = (${currentHJ} × ${currentFH}) / ${currentHI} ≈ <strong>${expectedHG} cm</strong>
+                            </p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialisation lors du chargement de la page
+        window.onload = function() {
+            genererExercice();
+        };
+    </script>
 </body>
 </html>
+```
