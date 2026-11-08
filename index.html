@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Exercice de Thalès - Style MathALéa</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 30px auto; padding: 20px; background-color: #f4f6f9; color: #333; }
+        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .header { background: #1a73e8; color: white; padding: 12px 15px; border-radius: 5px; font-weight: bold; margin-bottom: 20px; font-size: 1.1em; }
+        button { background: #ff6600; color: white; border: none; padding: 10px 18px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-bottom: 20px; }
+        button:hover { background: #e55b00; }
+        .btn-verifier { background: #28a745; }
+        .btn-verifier:hover { background: #218838; }
+        input[type="text"] { padding: 6px; width: 90px; text-align: center; border: 1px solid #ccc; border-radius: 4px; }
+        textarea { width: 100%; height: 90px; margin-top: 5px; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; resize: vertical; }
+        .question-block { margin: 20px 0; }
+        .result { margin-top: 15px; font-weight: bold; font-size: 1.1em; }
+        .enonce-box { background: #fff3e0; padding: 15px; border-left: 5px solid #ff6600; border-radius: 4px; margin-bottom: 20px; line-height: 1.6; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="header">3G20 - Calculer des longueurs avec le théorème de Thalès</div>
+    
+    <button onclick="genererExercice()">🔄 Nouvel Énoncé</button>
+    
+    <div id="enonce" class="enonce-box">Chargement de l'énoncé...</div>
+    
+    <div class="question-block">
+        <label for="userCalculation"><strong>📝 Espace pour insérer ton calcul / ta rédaction :</strong></label><br>
+        <textarea id="userCalculation" placeholder="Écris ici ton rapport de proportionnalité (ex: HI / FH = IJ / FG ...) et tes étapes de calcul..."></textarea>
+    </div>
+
+    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+    <div class="question-block">
+        $IJ =$ <input type="text" id="ansIJ"> cm <br><br>
+        $HG =$ <input type="text" id="ansHG"> cm
+    </div>
+
+    <button class="btn-verifier" onclick="verifierReponse()">Vérifier la réponse</button>
+    <div id="feedback" class="result"></div>
+</div>
+
+<script>
+let correctIJ, correctHG;
+
+function genererExercice() {
+    // Liste de cas cohérents pour le théorème de Thalès (configuration papillon)
+    const listEx = [
+        {FH: 10, FG: 5, HI: 4, HJ: 4.8, IJ: 2, HG: 12},
+        {FH: 12, FG: 6, HI: 3, HJ: 5, IJ: 1.5, HG: 20},
+        {FH: 9, FG: 6, HI: 3, HJ: 4.5, IJ: 2, HG: 13.5},
+        {FH: 15, FG: 10, HI: 5, HJ: 6, IJ: 3.33, HG: 18}
+    ];
+    
+    // Sélection aléatoire d'un exercice de la liste
+    let ex = listEx[Math.floor(Math.random() * listEx.length)];
+    
+    correctIJ = ex.IJ;
+    correctHG = ex.HG;
+
+    let texte = `Sur la figure suivante (configuration en papillon sécante en $H$ avec $(FG)//(IJ)$), on a :<br>` +
+                `• $FH = ${ex.FH}\\text{ cm}$<br>` +
+                `• $FG = ${ex.FG}\\text{ cm}$<br>` +
+                `• $HI = ${ex.HI}\\text{ cm}$<br>` +
+                `• $HJ = ${ex.HJ}\\text{ cm}$`;
+    
+    document.getElementById('enonce').innerHTML = texte;
+    document.getElementById('ansIJ').value = '';
+    document.getElementById('ansHG').value = '';
+    document.getElementById('userCalculation').value = '';
+    document.getElementById('feedback').innerHTML = '';
+}
+
+function verifierReponse() {
+    let userIJ = parseFloat(document.getElementById('ansIJ').value.replace(',', '.'));
+    let userHG = parseFloat(document.getElementById('ansHG').value.replace(',', '.'));
+    
+    let feedback = document.getElementById('feedback');
+    
+    if (isNaN(userIJ) || isNaN(userHG)) {
+        feedback.style.color = '#d9534f';
+        feedback.innerHTML = '⚠️ Merci de remplir les deux champs numériques pour $IJ$ et $HG$.';
+        return;
+    }
+
+    let okIJ = Math.abs(userIJ - correctIJ) < 0.1;
+    let okHG = Math.abs(userHG - correctHG) < 0.1;
+
+    if (okIJ && okHG) {
+        feedback.style.color = '#28a745';
+        feedback.innerHTML = '🎉 Excellent ! Tes réponses sont correctes et ton calcul est enregistré.';
+    } else {
+        feedback.style.color = '#d9534f';
+        feedback.innerHTML = `❌ Il y a une erreur. Les valeurs attendues étaient : $IJ = ${correctIJ}\\text{ cm}$ et $HG = ${correctHG}\\text{ cm}$.`;
+    }
+}
+
+// Générer l'exercice au chargement de la page
+window.onload = genererExercice;
+</script>
+
+</body>
+</html>
